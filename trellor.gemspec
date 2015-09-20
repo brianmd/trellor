@@ -4,23 +4,15 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'trellor/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "trellor"
+  spec.name          = 'trellor'
   spec.version       = Trellor::VERSION
-  spec.authors       = ["Brian Murphy-Dye"]
-  spec.email         = ["brian@murphydye.com"]
+  spec.authors       = ['Brian Murphy-Dye']
+  spec.email         = ['brian@murphydye.com']
 
-  spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
-  spec.license       = "MIT"
-
-  # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
-  # delete this section to allow pushing this gem to any host.
-  if spec.respond_to?(:metadata)
-    spec.metadata['allowed_push_host'] = "TODO: Set to 'http://mygemserver.com'"
-  else
-    raise "RubyGems 2.0 or newer is required to protect against public gem pushes."
-  end
+  spec.summary       = %q{Gem to read and write to Trello, plus a terminal interface.}
+  spec.description   = %q{}
+  spec.homepage      = ''
+  spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir        = "exe"

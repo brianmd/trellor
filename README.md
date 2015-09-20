@@ -1,28 +1,22 @@
 # Trellor
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/trellor`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Gem to read and write to Trello, plus a terminal interface.
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'trellor'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
     $ gem install trellor
+
+    Need three environment variables to be set up: TRELLOR_KEY, TRELLOR_TOKEN,
+    and TRELLOR_USERNAME
 
 ## Usage
 
-TODO: Write usage instructions here
+    $ trellor        # prints all board names
+    $ trellor to     # prints all list names inside the first board with name
+                     # beginning with 'to' (case insensitive)
+    $ trellor to.in  # prints all card names in the list named 'in*' in board
+                     # named 'to*'
+    $ trellor to.in 'this is a new card', 'this is an optional description.'
 
 ## Development
 
