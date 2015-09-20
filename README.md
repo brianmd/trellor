@@ -6,16 +6,27 @@ Gem to read and write to Trello, plus a terminal interface.
 
     $ gem install trellor
 
-    Need three environment variables to be set up: TRELLOR_KEY, TRELLOR_TOKEN,
+    Three environment variables need to be set: TRELLOR_KEY, TRELLOR_TOKEN,
     and TRELLOR_USERNAME
+
+    **TRELLOR_KEY** comes from your developer public key at:
+    https://trello.com/1/appKey/generate
+    (note: also copy the develop api key for the next step)
+
+    **TRELLOR_TOKEN** is the member token found at:
+    https://trello.com/1/authorize?key=YOUR_DEVELOPER_API_KEY&name=trello-cli&expiration=never&response_type=token&scope=read,write
+
+    **TRELLOR_USERNAME** is your username
 
 ## Usage
 
     $ trellor        # prints all board names
     $ trellor to     # prints all list names inside the first board with name
                      # beginning with 'to' (case insensitive)
+                     # for example, this will match 'ToDo'
     $ trellor to.in  # prints all card names in the list named 'in*' in board
-                     # named 'to*'
+                     # named 'to*', e.g., matches 'ToDo.Inbox'
+    # create a card:
     $ trellor to.in 'this is a new card', 'this is an optional description.'
 
 ## Development
