@@ -1,3 +1,5 @@
+# TODO: show card descriptions
+
 require_relative "trellor/version"
 require 'trello'
 
