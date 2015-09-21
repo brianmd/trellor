@@ -6,7 +6,7 @@ Gem to read and write to Trello, plus a terminal interface.
 
     $ gem install trellor
 
-    Three environment variables need to be set: TRELLOR_KEY, TRELLOR_TOKEN,
+Three environment variables need to be set: TRELLOR_KEY, TRELLOR_TOKEN,
     and TRELLOR_USERNAME
 
     TRELLOR_KEY comes from your developer public key at:
@@ -14,7 +14,7 @@ Gem to read and write to Trello, plus a terminal interface.
     (note: also copy the develop api key for the next step)
 
     TRELLOR_TOKEN is the member token found at:
-    https://trello.com/1/authorize?key=YOUR_DEVELOPER_API_KEY&name=trello-cli&expiration=never&response_type=token&scope=read,write
+    https://trello.com/1/authorize?key=YOUR_DEVELOPER_API_KEY&name=trellor&expiration=never&response_type=token&scope=read,write
 
     TRELLOR_USERNAME is your username
 
