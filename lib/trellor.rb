@@ -21,7 +21,7 @@ module Trellor
     end
 
     def boards
-      @boards ||= user.boards
+      @boards ||= user.boards.select{ |b| !b.closed? }
     end
 
     def board(name)
