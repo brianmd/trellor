@@ -25,10 +25,12 @@ module Trellor
     end
 
     def board(name)
+      name = name.downcase
       boards.detect{ |board| board.name.downcase.start_with?(name) }
     end
 
     def list(board_name, list_name)
+      list_name = list_name.downcase
       board(board_name).lists.detect do |list|
         list.name.downcase.start_with?(list_name)
       end

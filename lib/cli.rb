@@ -1,11 +1,11 @@
 require 'optparse'
+require 'pathname'
 
 module Trellor
   class Cli
     def self.parse(*args)
-    #def self.parse(board_and_list=nil, card_name=nil, descript=nil)
       options = OpenStruct.new
-      options.force = false
+      options.force_cache = false
       options.verbose = false
 
       opt_parser = OptionParser.new do |opts|
@@ -20,7 +20,9 @@ module Trellor
         end
 
         opts.on("-f", "--force", "Force re-caching") do |lib|
-          options.force = true
+          options.force_cache = true
+          hash = save_all
+          puts hash
         end
 
         # No argument, shows at tail.  This will print an options summary.
@@ -42,8 +44,42 @@ module Trellor
       process(*args)
     end
 
+    def self.trellor
+      @trellor ||= Trellor.new
+    end
+    
+    def self.homepath
+      Pathname.new(ENV['HOME'])
+    end
+    def self.filepath
+      homepath + '.config/.trellor'
+    end
+
+    def self.save_all
+      path = homepath + '.config'
+      path.mkdir unless path.directory?
+      hash = all
+      filepath.open('w') do |out|
+        out.puts JSON.pretty_generate(hash)
+      end
+      hash
+    end
+
+    def self.get_all
+      JSON.parse(filepath.read)
+    end
+
+    def self.all
+      hash = {}
+      trellor.boards.each do |board|
+        lists = {}
+        board.lists.each{ |l| lists[l.name] = l.id }
+        hash[board.name] = { id: board.id, lists: lists }
+      end
+      hash
+    end
+
     def self.process(board_and_list=nil, card_name=nil, descript=nil)
-      trellor = Trellor.new
       if board_and_list.nil?
         puts "Boards:", '-'*50
         trellor.boards.each{ |board| puts board.name }
