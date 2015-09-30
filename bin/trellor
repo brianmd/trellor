@@ -4,5 +4,5 @@ require 'bundler/setup'
 require 'trellor'
 require 'cli'
 
-Trellor::Cli.parse(*ARGV)
+Trellor::Cli.parse
 

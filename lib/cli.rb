@@ -1,51 +1,33 @@
-require 'optparse'
+require 'trollop'
 require 'pathname'
 
 module Trellor
   class Cli
-    def self.parse(*args)
-      options = OpenStruct.new
-      options.force_cache = false
-      options.verbose = false
-
-      opt_parser = OptionParser.new do |opts|
-        opts.banner = "Usage: trellor [boardname[.listname [cardname [description]]]]"
-
-        opts.separator ""
-        opts.separator "Specific options:"
-
-        # Mandatory argument.
-        opts.on("-v", "--[no-]verbose", "Run verbosely") do |lib|
-          options.verbose = true
-        end
-
-        opts.on("-f", "--force", "Force re-caching") do |lib|
-          options.force_cache = true
-          hash = save_all
-          puts hash
-        end
-
-        # No argument, shows at tail.  This will print an options summary.
-        # Try it and see!
-        opts.on_tail("-h", "--help", "Show this message") do
-          puts opts
-          exit
-        end
-
-        # Another typical switch to print the version.
-        opts.on_tail("--version", "Show version") do
-          puts ::Trellor::VERSION
-          exit
-        end
-   
+    def self.parse
+      @opts = Trollop::options do
+        banner "Usage: trellor [boardname [listname [cardname [description]]]]"
+        version "trellor #{VERSION}"
+        opt :cache, 'Cache (or re-cache)', short: '-c'
+        opt :verbose, 'Run verbosely', short: '-v'
       end
-      opt_parser.parse!(args)
 
-      process(*args)
+      if cache?
+        hash = save_all
+        p hash
+      end
+
+      process(*ARGV)
     end
 
+    private
+
     def self.trellor
-      @trellor ||= Trellor.new
+      unless @trellor
+        verbose_log('creating Trellor instance')
+        @trellor = Trellor.new
+        @trellor.be_verbose = true if @opts[:verbose]
+      end
+      @trellor
     end
     
     def self.homepath
@@ -70,8 +52,10 @@ module Trellor
     end
 
     def self.all
+      verbose_log('downloading all boards and lists')
       hash = {}
       trellor.boards.each do |board|
+        verbose_log('downloading board', board.name)
         lists = {}
         board.lists.each{ |l| lists[l.name] = l.id }
         hash[board.name] = { id: board.id, lists: lists }
@@ -79,12 +63,14 @@ module Trellor
       hash
     end
 
-    def self.process(board_and_list=nil, card_name=nil, descript=nil)
-      if board_and_list.nil?
+    def self.process(board_name=nil, list_name=nil, card_name=nil, descript=nil)
+      verbose_log "board_name", board_name
+      verbose_log "list_name", list_name
+      verbose_log "card_name", card_name
+      if board_name.nil?
         puts "Boards:", '-'*50
         trellor.boards.each{ |board| puts board.name }
       else
-        board_name, list_name = board_and_list.split('.')
         if list_name.nil?
           board = trellor.board(board_name)
           puts "Board: #{board.name}", '-'*50
@@ -97,6 +83,14 @@ module Trellor
           trellor.create_card(board_name, list_name, card_name, descript)
         end
       end
+    end
+
+    def self.verbose_log(*args)
+      $stderr.puts("           ****** #{args.inspect}") if @opts[:verbose]
+    end
+
+    def self.cache?
+      @opts[:cache]
     end
   end
 end
