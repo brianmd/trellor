@@ -20,17 +20,21 @@ Three environment variables need to be set: TRELLOR_KEY, TRELLOR_TOKEN,
 
 ## Usage
 
+    $ trellor -h     # prints help
     $ trellor        # prints all board names
+    $ trellor        # caches all boards and lists to ~/.config/.trellor
+                     # toying with using this to speed access
+                     # however, the connection seems to be main slowdown
     $ trellor to     # prints all list names inside the first board with name
                      # beginning with 'to' (case insensitive)
-                     # for example, this will match 'ToDo'
-    $ trellor to.in  # prints all card names in the list named 'in*' in board
+                     # for example, this matches 'ToDo'
+    $ trellor to in  # prints all card names in the list named 'in*' in board
                      # named 'to*', e.g., matches 'ToDo.Inbox'
     # create a card:
-    $ trellor to.in 'this is a new card', 'this is an optional description.'
+    $ trellor to in 'this is a new card', 'this is an optional description.'
 
     Using aliases work well, for example:
-    $ alias inbox="trellor todo.inbox"
+    $ alias inbox="trellor todo inbox"
     $ inbox               # prints cards in todo.inbox
     $ inbox 'new card'    # creates a new card in todo.inbox
 
