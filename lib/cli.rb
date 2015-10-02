@@ -9,6 +9,15 @@ module Trellor
         version "trellor #{VERSION}"
         opt :cache, 'Cache (or re-cache)', short: '-c'
         opt :verbose, 'Run verbosely', short: '-v'
+        opt :webapi, 'Run webapi', short: '-w'
+      end
+
+      if webapi?
+        puts 'webapi'
+        require_relative 'webapi'
+        run TrellorWebapi
+        puts 'done?'
+        sleep 10
       end
 
       if cache?
@@ -87,6 +96,10 @@ module Trellor
 
     def self.verbose_log(*args)
       $stderr.puts("           ****** #{args.inspect}") if @opts[:verbose]
+    end
+
+    def self.webapi?
+      @opts[:webapi]
     end
 
     def self.cache?

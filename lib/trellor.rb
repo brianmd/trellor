@@ -7,6 +7,14 @@ module Trellor
   class Trellor
     attr_accessor :be_verbose
 
+    def self.singleton
+      unless @singleton
+        puts 'getting singleton'
+        @singleton = self.new
+      end
+      @singleton
+    end
+
     def client(key=ENV['TRELLOR_KEY'], token=ENV['TRELLOR_TOKEN'])
       @client ||= connect(key, token)
     end
