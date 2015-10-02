@@ -36,6 +36,29 @@ module Trellor
       @user ||= client.find(:members, ENV['TRELLOR_USERNAME'])
     end
 
+    def board_names
+      boards.collect{ |board| board.name }
+    end
+    def list_names(board_name)
+      board(board_name).lists.collect{ |list| list.name }
+    end
+    def card_names(board_name, list_name)
+      list(board_name, list_name).cards.collect{ |card| card.name }
+    end
+    def create_card(board_name, list_name, name, descript=nil)
+      card = Trello::Card.new
+      card.client = client
+      card.list_id = list(board_name, list_name).id
+      card.name = name
+      card.desc = descript if descript
+      card.save
+      card_names(board_name, list_name)
+    end
+
+
+
+
+
     def boards
       verbose_log('getting boards') unless @boards
       @boards ||= user.boards.select{ |b| !b.closed? }
@@ -69,15 +92,6 @@ module Trellor
       list(board_name, list_name).cards.detect do |card|
         card.name==card_name
       end
-    end
-
-    def create_card(board_name, list_name, name, descript=nil)
-      card = Trello::Card.new
-      card.client = client
-      card.list_id = list(board_name, list_name).id
-      card.name = name
-      card.desc = descript if descript
-      card.save
     end
   end
 end

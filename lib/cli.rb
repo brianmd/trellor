@@ -10,6 +10,7 @@ module Trellor
         opt :cache, 'Cache (or re-cache)', short: '-c'
         opt :verbose, 'Run verbosely', short: '-v'
         opt :webapi, 'Run webapi', short: '-w'
+        opt :slowtrellor, 'Make own connection rather than using webapi', short: '-s'
       end
 
       if webapi?
@@ -33,7 +34,14 @@ module Trellor
     def self.trellor
       unless @trellor
         verbose_log('creating Trellor instance')
-        @trellor = Trellor.new
+        @trellor = if @opts[:slowtrellor]
+          verbose_log('using local (slower) trellor')
+          Trellor.new
+        else
+          verbose_log('using webapi')
+          require_relative 'web_trellor'
+          WebTrellor.new
+        end
         @trellor.be_verbose = true if @opts[:verbose]
       end
       @trellor
@@ -78,18 +86,22 @@ module Trellor
       verbose_log "card_name", card_name
       if board_name.nil?
         puts "Boards:", '-'*50
-        trellor.boards.each{ |board| puts board.name }
+        trellor.board_names.each{ |name| puts name }
+        # trellor.boards.each{ |board| puts board.name }
       else
         if list_name.nil?
-          board = trellor.board(board_name)
-          puts "Board: #{board.name}", '-'*50
-          board.lists.each{ |list| puts list.name }
+          # board = trellor.board(board_name)
+          puts "Board: #{board_name}", '-'*50
+          trellor.list_names(board_name).each{ |name| puts name }
+          # board.lists.each{ |list| puts list.name }
         elsif card_name.nil?
-          list = trellor.list(board_name, list_name)
-          puts "List: #{list.name}", '-'*50
-          list.cards.each{ |card| puts card.name }
+          # list = trellor.list(board_name, list_name)
+          puts "List: #{board_name}.#{list_name}", '-'*50
+          trellor.card_names(board_name, list_name).each{ |name| puts name }
+          # list.cards.each{ |card| puts card.name }
         else
-          trellor.create_card(board_name, list_name, card_name, descript)
+          card_names = trellor.create_card(board_name, list_name, card_name, descript)
+          card_names.each{ |name| puts name }
         end
       end
     end

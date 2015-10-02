@@ -19,7 +19,7 @@ get '/' do
 end
 
 get '/boards' do
-  boards = trellor.boards.collect{ |board| board.name }
+  boards = trellor.board_names
   boards.to_json
 end
 
@@ -33,12 +33,12 @@ get '/boards/:board_name/lists/:list_name/cards' do
   cards.to_json
 end
 
-get '/boards/:board_name/lists/:list_name/cards/:card_name' do
+get '/bbboards/:board_name/lists/:list_name/cards/:card_name' do
   card = trellor.list(params['board_name'],params['list_name'],params['card_name'])
   card.to_json
 end
 
-put '/boards/:board_name/lists/:list_name/cards/:card_name' do
+get '/boards/:board_name/lists/:list_name/cards/:card_name' do
   card = Trello::Card.new
   card.client = trellor.client
   card.list_id = trellor.list(params['board_name'],params['list_name']).id
