@@ -40,7 +40,9 @@ module Trellor
         else
           verbose_log('using webapi')
           require_relative 'web_trellor'
-          WebTrellor.new
+          web = WebTrellor.new
+          web.ensure_webapp_is_running
+          web
         end
         @trellor.be_verbose = true if @opts[:verbose]
       end

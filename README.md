@@ -38,6 +38,11 @@ Three environment variables need to be set: TRELLOR_KEY, TRELLOR_TOKEN,
     $ inbox               # prints cards in todo.inbox
     $ inbox 'new card'    # creates a new card in todo.inbox
 
+Starting with version 2, a webapp is run in the background. Making the connection to
+Trello resulted in over half the time to run a command. The local webapp pays
+this cost only once.
+
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

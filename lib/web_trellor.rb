@@ -8,13 +8,30 @@ module Trellor
   class WebTrellor
     attr_accessor :be_verbose
 
+    def ensure_webapp_is_running
+      fail unless VERSION == get_version
+    rescue
+      puts "The background webapp wasn't running. Will run it now."
+      cmd = "ruby lib/webapi.rb &> /dev/null"
+      job1 = fork do
+        exec cmd
+      end
+      Process.detach(job1)
+      sleep 0.5
+    end
+
+    def get_version
+      response = get_http('/version')
+      response.body
+    end
+
     def get_http(url, timeout=nil)
       uri = URI("#{site}#{url}")
       http = Net::HTTP.new uri.host, uri.port
       http.open_timeout = default_open_timeout
       http.read_timeout = timeout || default_read_timeout
       request = Net::HTTP::Get.new(uri.request_uri)
-      # request.basic_auth 'bh', password if password
+      # request.basic_auth 'trellor', password if password
       http.request(request)
     rescue Exception => e
       $stderr.puts "ERROR in get_http(#{url})"
@@ -31,7 +48,7 @@ module Trellor
       http.open_timeout = default_open_timeout
       http.read_timeout = timeout || default_read_timeout
       request = Net::HTTP::Post.new(uri.request_uri)
-      # request.basic_auth 'bh', password if password
+      # request.basic_auth 'trellor', password if password
 
       request.set_form_data data
       http.request(request)

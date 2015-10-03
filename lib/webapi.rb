@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'json'
+require_relative 'trellor/version'
 require_relative 'trellor'
 
 module Trellor
@@ -14,8 +15,8 @@ def trellor
   Trellor::Trellor.singleton
 end
 
-get '/' do
-  "Hello, world!"
+get '/version' do
+  Trellor::VERSION
 end
 
 get '/boards' do
