@@ -37,10 +37,10 @@ module Trellor
     end
 
     def board_names
-      boards.collect{ |board| board.name }
+      boards.collect{ |board| board.name }.sort_by{|name| name.downcase}
     end
     def list_names(board_name)
-      board(board_name).lists.collect{ |list| list.name }
+      board(board_name).lists.collect{ |list| list.name }.sort_by{|name| name.downcase}
     end
     def card_names(board_name, list_name)
       list(board_name, list_name).cards.collect{ |card| card.name }

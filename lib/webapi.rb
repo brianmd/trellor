@@ -23,13 +23,13 @@ get '/boards' do
   boards.to_json
 end
 
-get '/boards/:board_name/lists' do
-  lists = trellor.board(params['board_name']).lists.collect{ |list| list.name }
+get '/boards/:board_name/lists' do |board_name|
+  lists = trellor.list_names(board_name)
   lists.to_json
 end
 
-get '/boards/:board_name/lists/:list_name/cards' do
-  cards = trellor.list(params['board_name'],params['list_name']).cards.collect{ |card| card.name }
+get '/boards/:board_name/lists/:list_name/cards' do |board_name, list_name|
+  cards = trellor.list(board_name,list_name).cards.collect{ |card| card.name }
   cards.to_json
 end
 
@@ -38,14 +38,14 @@ get '/bbboards/:board_name/lists/:list_name/cards/:card_name' do
   card.to_json
 end
 
-post '/boards/:board_name/lists/:list_name/cards' do
+post '/boards/:board_name/lists/:list_name/cards' do |board_name, list_name|
   card = Trello::Card.new
   card.client = trellor.client
-  card.list_id = trellor.list(params['board_name'],params['list_name']).id
+  card.list_id = trellor.list(board_name,list_name).id
   card.name = params['card_name']
   card.save
 
-  cards = trellor.list(params['board_name'],params['list_name']).cards.collect{ |c| c.name }
+  cards = trellor.list(board_name,list_name).cards.collect{ |c| c.name }
   cards.to_json
 end
 
