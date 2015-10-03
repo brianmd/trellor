@@ -41,7 +41,7 @@ module Trellor
     end
 
     def default_open_timeout
-      @default_open_timeout ||= (ENV['TRELLOR_OPEN_TIMEOUT'] || 5).to_i
+      @default_open_timeout ||= (ENV['TRELLOR_OPEN_TIMEOUT'] || 1).to_i
     end
 
     def default_read_timeout
@@ -79,7 +79,7 @@ module Trellor
     end
 
     def create_card(board_name, list_name, name, descript=nil)
-      JSON.parse(get_http("/boards/#{board_name}/lists/#{list_name}/cards/#{name}").body)
+      JSON.parse(post_http("/boards/#{board_name}/lists/#{list_name}/cards", {card_name: name}).body)
     end
 
 
