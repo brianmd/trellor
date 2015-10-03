@@ -2,6 +2,7 @@
 
 require 'trello'
 require 'net/http'
+require 'pathname'
 require_relative "trellor/version"
 
 module Trellor
@@ -12,12 +13,13 @@ module Trellor
       fail unless VERSION == get_version
     rescue
       puts "The background webapp wasn't running. Will run it now."
-      cmd = "ruby lib/webapi.rb &> /dev/null"
-      job1 = fork do
+      path = Pathname.new(__FILE__).parent.parent
+      cmd = "cd '#{path}' && ruby lib/webapi.rb &> /dev/null"
+      job = fork do
         exec cmd
       end
-      Process.detach(job1)
-      sleep 0.5
+      Process.detach(job)
+      sleep 1.0   # give webapp time to run before returning
     end
 
     def get_version
