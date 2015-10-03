@@ -3,13 +3,34 @@ require 'json'
 require_relative 'trellor/version'
 require_relative 'trellor'
 
+
 module Trellor
   class TrellorWebapi < Sinatra::Base
-    get '/' do
-      "Hello, world!"
+    # enable error handler even in development mode
+    set :show_exceptions, :after_handler
+
+    not_found do
+      'no such path'
     end
+
+    error do
+      'had an error'
+    end
+
   end
 end
+
+
+set :show_exceptions, false
+
+not_found do
+  'no such path'
+end
+
+error do
+  'had an error'
+end
+
 
 def trellor
   Trellor::Trellor.singleton
@@ -40,13 +61,14 @@ get '/bbboards/:board_name/lists/:list_name/cards/:card_name' do
 end
 
 post '/boards/:board_name/lists/:list_name/cards' do |board_name, list_name|
-  card = Trello::Card.new
-  card.client = trellor.client
-  card.list_id = trellor.list(board_name,list_name).id
-  card.name = params['card_name']
-  card.save
+  if params['archive']
+    trellor.archive_card(board_name, list_name, params['card_name'])
+  else
+    trellor.create_card(board_name, list_name, params['card_name'], params['descript'])
+  end
 
   cards = trellor.list(board_name,list_name).cards.collect{ |c| c.name }
   cards.to_json
+  params.to_json
 end
 

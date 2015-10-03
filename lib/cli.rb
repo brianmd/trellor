@@ -7,6 +7,7 @@ module Trellor
       @opts = Trollop::options do
         banner "Usage: trellor [boardname [listname [cardname [description]]]]"
         version "trellor #{VERSION}"
+        opt :archive, 'Archive a card', short: '-a'
         opt :cache, 'Cache (or re-cache)', short: '-c'
         opt :verbose, 'Run verbosely', short: '-v'
         opt :webapi, 'Run webapi', short: '-w'
@@ -89,22 +90,18 @@ module Trellor
       if board_name.nil?
         puts "Boards:", '-'*50
         trellor.board_names.each{ |name| puts name }
-        # trellor.boards.each{ |board| puts board.name }
+      elsif list_name.nil?
+        puts "Lists for Board: #{board_name}", '-'*50
+        trellor.list_names(board_name).each{ |name| puts name }
+      elsif card_name.nil?
+        puts "Cards for List: #{board_name}.#{list_name}", '-'*50
+        trellor.card_names(board_name, list_name).each{ |name| puts name }
+      elsif archive?
+        trellor.archive_card(board_name, list_name, card_name)
+        trellor.card_names(board_name, list_name).each{ |name| puts name }
       else
-        if list_name.nil?
-          # board = trellor.board(board_name)
-          puts "Board: #{board_name}", '-'*50
-          trellor.list_names(board_name).each{ |name| puts name }
-          # board.lists.each{ |list| puts list.name }
-        elsif card_name.nil?
-          # list = trellor.list(board_name, list_name)
-          puts "List: #{board_name}.#{list_name}", '-'*50
-          trellor.card_names(board_name, list_name).each{ |name| puts name }
-          # list.cards.each{ |card| puts card.name }
-        else
-          card_names = trellor.create_card(board_name, list_name, card_name, descript)
-          card_names.each{ |name| puts name }
-        end
+        trellor.create_card(board_name, list_name, card_name, descript)
+        trellor.card_names(board_name, list_name).each{ |name| puts name }
       end
     end
 
@@ -114,6 +111,10 @@ module Trellor
 
     def self.webapi?
       @opts[:webapi]
+    end
+
+    def self.archive?
+      @opts[:archive]
     end
 
     def self.cache?

@@ -10,24 +10,36 @@ module Trellor
     attr_accessor :be_verbose
 
     def ensure_webapp_is_running
-      fail unless VERSION == get_version
+      v = get_version
+      $stderr.puts "Warning: this version is #{VERSION} but the webapp version is #{v}. You may want to kill the older webapp." unless VERSION == v
+      fail unless v
     rescue
       puts "The background webapp wasn't running. Will run it now."
+      run_webapp
+    end
+
+    def run_webapp
       path = Pathname.new(__FILE__).parent.parent
       cmd = "cd '#{path}' && ruby lib/webapi.rb &> /dev/null"
       job = fork do
         exec cmd
       end
+      # give webapp time to run before returning
+      (1..15).each do |n|
+        sleep 0.1
+        return if get_version
+      end
       Process.detach(job)
-      sleep 1.0   # give webapp time to run before returning
     end
 
     def get_version
-      response = get_http('/version')
+      response = get_http('/version', nil, false)
       response.body
+    rescue
+      nil
     end
 
-    def get_http(url, timeout=nil)
+    def get_http(url, timeout=nil, show_error=true)
       uri = URI("#{site}#{url}")
       http = Net::HTTP.new uri.host, uri.port
       http.open_timeout = default_open_timeout
@@ -36,7 +48,7 @@ module Trellor
       # request.basic_auth 'trellor', password if password
       http.request(request)
     rescue Exception => e
-      $stderr.puts "ERROR in get_http(#{url})"
+      $stderr.puts "ERROR in get_http(#{url})" if show_error
       raise e
     end
 
@@ -98,9 +110,12 @@ module Trellor
     end
 
     def create_card(board_name, list_name, name, descript=nil)
-      JSON.parse(post_http("/boards/#{board_name}/lists/#{list_name}/cards", {card_name: name}).body)
+      JSON.parse(post_http("/boards/#{board_name}/lists/#{list_name}/cards", {card_name: name, descript: descript}).body)
     end
 
+    def archive_card(board_name, list_name, name)
+      JSON.parse(post_http("/boards/#{board_name}/lists/#{list_name}/cards", {card_name: name, archive: true}).body)
+    end
 
 
 

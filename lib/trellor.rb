@@ -52,7 +52,11 @@ module Trellor
       card.name = name
       card.desc = descript if descript
       card.save
-      card_names(board_name, list_name)
+      # card_names(board_name, list_name)
+    end
+    def archive_card(board_name, list_name, name)
+      card = find_card(board_name, list_name, name)
+      card.close!
     end
 
 
@@ -88,9 +92,10 @@ module Trellor
       list(board_name, list_name).cards
     end
 
-    def card(board_name, list_name, card_name)
+    def find_card(board_name, list_name, card_name)
+      card_name = card_name.downcase
       list(board_name, list_name).cards.detect do |card|
-        card.name==card_name
+        card.name.downcase.start_with?(card_name)
       end
     end
   end
