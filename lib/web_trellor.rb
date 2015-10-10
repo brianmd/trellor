@@ -3,6 +3,7 @@
 require 'trello'
 require 'net/http'
 require 'pathname'
+require 'addressable/uri'
 require_relative "trellor/version"
 
 module Trellor
@@ -15,38 +16,45 @@ module Trellor
       fail unless v
     rescue
       puts "The background webapp wasn't running. Will run it now."
+      verbose_log "The background webapp wasn't running. Will run it now."
       run_webapp
     end
 
     def run_webapp
       path = Pathname.new(__FILE__).parent.parent
       cmd = "cd '#{path}' && ruby lib/webapi.rb &> /dev/null"
+      verbose_log cmd
       job = fork do
         exec cmd
       end
       # give webapp time to run before returning
-      (1..15).each do |n|
+      (1..30).each do |n|
+        verbose_log '.'
         sleep 0.1
-        return if get_version
+        ver = get_version
+        return if ver and ver!=''
       end
       Process.detach(job)
     end
 
     def get_version
-      response = get_http('/version', nil, false)
+      response = get_http('/version', nil, nil, false)
       response.body
     rescue
       nil
     end
 
-    def get_http(url, timeout=nil, show_error=true)
-      uri = URI("#{site}#{url}")
+    def get_http(url, data=nil, timeout=nil, show_error=true)
+      uri = Addressable::URI.parse("#{site}#{url}")
       http = Net::HTTP.new uri.host, uri.port
       http.open_timeout = default_open_timeout
       http.read_timeout = timeout || default_read_timeout
       request = Net::HTTP::Get.new(uri.request_uri)
       # request.basic_auth 'trellor', password if password
-      http.request(request)
+      request.set_form_data data if data
+      response = http.request(request)
+      verbose_log response.code, response.body
+      response
     rescue Exception => e
       $stderr.puts "ERROR in get_http(#{url})" if show_error
       raise e
@@ -65,7 +73,9 @@ module Trellor
       # request.basic_auth 'trellor', password if password
 
       request.set_form_data data
-      http.request(request)
+      response = http.request(request)
+      verbose_log response.code, response.body
+      response
     rescue Exception => e
       $stderr.puts "ERROR in post_http(#{url})"
       raise e
@@ -102,11 +112,11 @@ module Trellor
     end
 
     def list_names(board_name)
-      JSON.parse(get_http("/boards/#{board_name}/lists").body)
+      JSON.parse(get_http("/boards", {board_name: board_name}).body)
     end
 
     def card_names(board_name, list_name)
-      JSON.parse(get_http("/boards/#{board_name}/lists/#{list_name}/cards").body)
+      JSON.parse(get_http("/boards", {board_name: board_name, list_name: list_name}).body)
     end
 
     def create_card(board_name, list_name, name, descript=nil)

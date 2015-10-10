@@ -15,11 +15,11 @@ module Trellor
       end
 
       if webapi?
-        puts 'webapi'
-        require_relative 'webapi'
-        run TrellorWebapi
-        puts 'done?'
-        sleep 10
+        require_relative 'web_trellor'
+        web = WebTrellor.new
+        web.be_verbose = true if @opts[:verbose]
+        web.ensure_webapp_is_running
+        exit 0
       end
 
       if cache?
@@ -42,6 +42,7 @@ module Trellor
           verbose_log('using webapi')
           require_relative 'web_trellor'
           web = WebTrellor.new
+          web.be_verbose = true if @opts[:verbose]
           web.ensure_webapp_is_running
           web
         end

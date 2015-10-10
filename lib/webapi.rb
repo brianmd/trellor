@@ -41,23 +41,16 @@ get '/version' do
 end
 
 get '/boards' do
-  boards = trellor.board_names
-  boards.to_json
-end
-
-get '/boards/:board_name/lists' do |board_name|
-  lists = trellor.list_names(board_name)
-  lists.to_json
-end
-
-get '/boards/:board_name/lists/:list_name/cards' do |board_name, list_name|
-  cards = trellor.list(board_name,list_name).cards.collect{ |card| card.name }
-  cards.to_json
-end
-
-get '/bbboards/:board_name/lists/:list_name/cards/:card_name' do
-  card = trellor.list(params['board_name'],params['list_name'],params['card_name'])
-  card.to_json
+  if params[:list_name]
+    cards = trellor.list(params[:board_name],params[:list_name]).cards.collect{ |card| card.name }
+    cards.to_json
+  elsif params[:board_name]
+    lists = trellor.list_names(params[:board_name])
+    lists.to_json
+  else
+    boards = trellor.board_names
+    boards.to_json
+  end
 end
 
 post '/boards/:board_name/lists/:list_name/cards' do |board_name, list_name|

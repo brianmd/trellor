@@ -1,6 +1,6 @@
 # Trellor
 
-Gem to read and write to Trello, plus a terminal interface.
+Terminal interface to Trello.
 
 ## Installation
 
