@@ -52,7 +52,6 @@ module Trellor
       card.name = name
       card.desc = descript if descript
       card.save
-      # card_names(board_name, list_name)
     end
     def archive_card(board_name, list_name, name)
       card = find_card(board_name, list_name, name)
@@ -74,17 +73,15 @@ module Trellor
     def board(name)
       boards   # to get verbose log ordering correct
       verbose_log('getting board', name)
-      name = name.downcase
-      boards.detect{ |board| board.name.downcase.start_with?(name) }
+      name = Regexp.new(name, Regexp::IGNORECASE)
+      boards.detect{ |board| name.match(board.name) }
     end
 
     def list(board_name, list_name)
       this_board = board(board_name)
       verbose_log('   getting list', board_name, list_name)
-      list_name = list_name.downcase
-      this_board.lists.detect do |list|
-        list.name.downcase.start_with?(list_name)
-      end
+      name = Regexp.new(list_name, Regexp::IGNORECASE)
+      this_board.lists.detect{ |list| name.match(list.name) }
     end
 
     def cards(board_name, list_name)
