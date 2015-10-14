@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Trellor do
+
   before(:all) {
     @trellor = Trellor::Trellor.new
   }
@@ -19,8 +20,9 @@ describe Trellor do
     card_name = "test #{Time.now}"
     @trellor.create_card('to', 'in', card_name)
     cards = @trellor.cards('to','in')
-    card = cards.detect{ |c| c.name==card_name }
+    card = cards.find{ |c| c.name==card_name }
     expect(card.name).to eq(card_name)
-    expect(@trellor.card('to', 'in', card_name)).to eq(card)
+    expect(@trellor.find_card('to', 'in', card_name)).to eq(card)
   end
+
 end

@@ -90,10 +90,10 @@ module Trellor
     end
 
     def find_card(board_name, list_name, card_name)
-      card_name = card_name.downcase
-      list(board_name, list_name).cards.detect do |card|
-        card.name.downcase.start_with?(card_name)
-      end
+      this_list = list(board_name, list_name)
+      verbose_log('   getting card', board_name, list_name, card_name)
+      name = Regexp.new(card_name, Regexp::IGNORECASE)
+      this_list.cards.detect{ |card| name.match(card.name) }
     end
   end
 end
