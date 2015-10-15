@@ -1,0 +1,84 @@
+@startuml
+
+class Cli {
+  parse()
+  -- queries --
+  query_trellor()
+  -- private --
+  save_all()
+  get_all()
+  home()
+  filepath()
+  verbose_log()
+}
+
+class TrellorInterface {
+  verbose_log(*args)
+  -- queries --
+  board_names()
+  list_names(board_regex)
+  cart_names(board_regex,list_regex)
+  create_card(board,list,card,descript)
+  archive_card(board,list,card)
+}
+
+Cli *- TrellorInterface : trellor >
+
+class Trellor {
+  self.singleton()
+  -- queries --
+  board_names()
+  list_names(board_regex)
+  cart_names(board_regex,list_regex)
+  create_card(board,list,card,descript)
+  -- private queries --
+  boards()
+  boards=(boards)
+  find_board(board_regex)
+  find_list(board_regex,list_regex)
+  cards(board_regex,list_regex)
+  find_card(board,list,card)
+  -- connecting --
+  client()
+  connect()
+  user()
+}
+
+class WebTrellor {
+  ensure_webapp_is_running()
+  run_webapp()
+  -- queries --
+  board_names()
+  list_names(board_regex)
+  cart_names(board_regex,list_regex)
+  create_card(board,list,card,descript)
+  -- private --
+  get_http(url,data,timeout,show_error?)
+  post_http(url,data,timeout,show_error?)
+  default_open_timeout()
+  default_read_timeout()
+  site()
+  port()
+}
+
+TrellorInterface <|-- Trellor
+TrellorInterface <|-- WebTrellor
+
+
+class Sinatra::Base
+
+class TrellorWebapi {
+  -- GETs --
+  /version
+  /boards
+  -- POSTs --
+  /boards
+  -- error handling --
+  not_found()
+  error()
+}
+
+Sinatra::Base <|-- TrellorWebapi
+
+@enduml
+

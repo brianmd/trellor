@@ -15,6 +15,8 @@ module Trellor
       @singleton
     end
 
+    ############  connecting  ###############
+
     def client(key=ENV['TRELLOR_KEY'], token=ENV['TRELLOR_TOKEN'])
       @client ||= connect(key, token)
     end
@@ -36,19 +38,22 @@ module Trellor
       @user ||= client.find(:members, ENV['TRELLOR_USERNAME'])
     end
 
+
+    ##############  trellor interface  ###############
+
     def board_names
       boards.collect{ |board| board.name }.sort_by{|name| name.downcase}
     end
     def list_names(board_name)
-      board(board_name).lists.collect{ |list| list.name }.sort_by{|name| name.downcase}
+      find_board(board_name).lists.collect{ |list| list.name }.sort_by{|name| name.downcase}
     end
     def card_names(board_name, list_name)
-      list(board_name, list_name).cards.collect{ |card| card.name }
+      find_list(board_name, list_name).cards.collect{ |card| card.name }
     end
     def create_card(board_name, list_name, name, descript=nil)
       card = Trello::Card.new
       card.client = client
-      card.list_id = list(board_name, list_name).id
+      card.list_id = find_list(board_name, list_name).id
       card.name = name
       card.desc = descript if descript
       card.save
@@ -60,7 +65,7 @@ module Trellor
 
 
 
-
+    ################  queries  #################
 
     def boards
       verbose_log('getting boards') unless @boards
@@ -70,30 +75,30 @@ module Trellor
       @boards = boards
     end
 
-    def board(name)
+    def find_board(name)
       boards   # to get verbose log ordering correct
       verbose_log('getting board', name)
       name = Regexp.new(name, Regexp::IGNORECASE)
-      boards.detect{ |board| name.match(board.name) }
+      boards.find{ |board| name.match(board.name) }
     end
 
-    def list(board_name, list_name)
-      this_board = board(board_name)
+    def find_list(board_name, list_name)
+      this_board = find_board(board_name)
       verbose_log('   getting list', board_name, list_name)
       name = Regexp.new(list_name, Regexp::IGNORECASE)
-      this_board.lists.detect{ |list| name.match(list.name) }
+      this_board.lists.find{ |list| name.match(list.name) }
     end
 
     def cards(board_name, list_name)
       verbose_log('       getting cards for', board_name, list_name)
-      list(board_name, list_name).cards
+      find_list(board_name, list_name).cards
     end
 
     def find_card(board_name, list_name, card_name)
       this_list = list(board_name, list_name)
       verbose_log('   getting card', board_name, list_name, card_name)
       name = Regexp.new(card_name, Regexp::IGNORECASE)
-      this_list.cards.detect{ |card| name.match(card.name) }
+      this_list.cards.find{ |card| name.match(card.name) }
     end
   end
 end

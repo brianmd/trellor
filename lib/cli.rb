@@ -27,7 +27,7 @@ module Trellor
         p hash
       end
 
-      process(*ARGV)
+      query_trellor(*ARGV)
     end
 
     private
@@ -84,7 +84,7 @@ module Trellor
       hash
     end
 
-    def self.process(board_name=nil, list_name=nil, card_name=nil, descript=nil)
+    def self.query_trellor(board_name=nil, list_name=nil, card_name=nil, descript=nil)
       verbose_log "board_name", board_name
       verbose_log "list_name", list_name
       verbose_log "card_name", card_name

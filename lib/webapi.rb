@@ -53,7 +53,9 @@ get '/boards' do
   end
 end
 
-post '/boards/:board_name/lists/:list_name/cards' do |board_name, list_name|
+post '/boards' do
+  board_name = params['board_name']
+  list_name = params['list_name']
   if params['archive']
     trellor.archive_card(board_name, list_name, params['card_name'])
   else
@@ -64,4 +66,16 @@ post '/boards/:board_name/lists/:list_name/cards' do |board_name, list_name|
   cards.to_json
   params.to_json
 end
+
+# post '/boards/:board_name/lists/:list_name/cards' do |board_name, list_name|
+  # if params['archive']
+    # trellor.archive_card(board_name, list_name, params['card_name'])
+  # else
+    # trellor.create_card(board_name, list_name, params['card_name'], params['descript'])
+  # end
+
+  # cards = trellor.list(board_name,list_name).cards.collect{ |c| c.name }
+  # cards.to_json
+  # params.to_json
+# end
 
