@@ -28,6 +28,7 @@ Three environment variables need to be set: TRELLOR_KEY, TRELLOR_TOKEN,
     $ trellor to     # prints all list names inside the first board with name
                      # beginning with 'to' (case insensitive)
                      # for example, this matches 'ToDo'
+    $ trellor 'to.*o'  # regular expression search, would also print todo board.
     $ trellor to in  # prints all card names in the list named 'in*' in board
                      # named 'to*', e.g., matches 'ToDo.Inbox'
     # create a card:
@@ -42,6 +43,9 @@ Starting with version 2, a webapp is run in the background. Making the connectio
 Trello resulted in over half the time to run a command. The local webapp pays
 this cost only once.
 
+Version 3 will be faster by using Trello's recently released webhooks. Plans
+also include allowing offline usage.
+
 
 ## Development
 
@@ -54,9 +58,12 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 ### Class Diagram
 ![Alt text](/docs/trellor.png?raw=true "Class Diagram")
 
+### Sequence Diagram
+![Alt text](/docs/trellor_seq_diag.png?raw=true "Sequence Diagram")
+
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/trellor.
+Bug reports and pull requests are welcome on GitHub at https://github.com/brianmd/trellor.
 
 
 ## License

@@ -1,0 +1,20 @@
+@startuml
+
+actor User
+
+User -> Cli : board_regex
+Cli -> WebTrellor : board_names\n  (board_regex)
+WebTrellor -> TrellorWebapi : get_http(/boards)\n  {board_name:\n       board_regex}
+|||
+TrellorWebapi -> Trellor : board_names\n  (board_regex)
+|||
+
+== OR, with -s(low) flag, goes directly to trellor class ==
+
+User -> Cli : board_regex
+Cli -> Trellor : board_names\n  (board_regex)
+|||
+note over TrellorWebapi: Runs sinatra \non localhost
+
+@enduml
+
