@@ -10,20 +10,25 @@ module Trellor
   class WebTrellor
     attr_accessor :be_verbose
 
-    def ensure_webapp_is_running
+    def ensure_webapp_is_running(fork=true)
       v = get_version
-      $stderr.puts "Warning: this version is #{VERSION} but the webapp version is #{v}. You may want to kill the older webapp." unless VERSION == v
+      $stderr.puts "Warning: this version is #{VERSION} but the webapp version is #{v}. You may want to kill the older webapp." unless (!v or (v==VERSION))
       fail unless v
     rescue
       puts "The background webapp wasn't running. Will run it now."
       verbose_log "The background webapp wasn't running. Will run it now."
-      run_webapp
+      run_webapp(fork)
     end
 
-    def run_webapp
+    def run_webapp(fork)
       path = Pathname.new(__FILE__).parent.parent
       cmd = "cd '#{path}' && ruby lib/webapi.rb &> /dev/null"
       verbose_log cmd
+      unless fork
+        $stderr.puts 'running ...'
+        exec cmd
+        exit 0
+      end
       job = fork do
         exec cmd
       end

@@ -18,7 +18,7 @@ module Trellor
         require_relative 'web_trellor'
         web = WebTrellor.new
         web.be_verbose = true if @opts[:verbose]
-        web.ensure_webapp_is_running
+        web.ensure_webapp_is_running(false)
         exit 0
       end
 
