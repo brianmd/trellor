@@ -1,6 +1,12 @@
 @startuml
 
 class Cli {
+  archive
+  verbose?
+  cache
+  webapi
+  slowtrellor
+  ==
   parse()
   -- queries --
   query_trellor()
@@ -31,6 +37,7 @@ class Trellor {
   list_names(board_regex)
   cart_names(board_regex,list_regex)
   create_card(board,list,card,descript)
+  archive_card(board,list,card)
   -- private queries --
   boards()
   boards=(boards)
@@ -52,6 +59,7 @@ class WebTrellor {
   list_names(board_regex)
   cart_names(board_regex,list_regex)
   create_card(board,list,card,descript)
+  archive_card(board,list,card)
   -- private --
   get_http(url,data,timeout,show_error?)
   post_http(url,data,timeout,show_error?)

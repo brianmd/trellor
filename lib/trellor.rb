@@ -15,31 +15,7 @@ module Trellor
       @singleton
     end
 
-    ############  connecting  ###############
-
-    def client(key=ENV['TRELLOR_KEY'], token=ENV['TRELLOR_TOKEN'])
-      @client ||= connect(key, token)
-    end
-
-    def connect(key=ENV['TRELLOR_KEY'], token=ENV['TRELLOR_TOKEN'])
-      verbose_log("connecting with", key, token)
-      Trello::Client.new(
-        :developer_public_key => key,
-        :member_token => token
-      )
-    end
-
-    def verbose_log(*args)
-      $stderr.puts("           ****** #{args.inspect}") if be_verbose
-    end
-
-    def user()
-      verbose_log('username', ENV['TRELLOR_USERNAME'])
-      @user ||= client.find(:members, ENV['TRELLOR_USERNAME'])
-    end
-
-
-    ##############  trellor interface  ###############
+    ##############  trellor interface queries  ###############
 
     def board_names
       boards.collect{ |board| board.name }.sort_by{|name| name.downcase}
@@ -65,7 +41,7 @@ module Trellor
 
 
 
-    ################  queries  #################
+    ################  private queries  #################
 
     def boards
       verbose_log('getting boards') unless @boards
@@ -100,6 +76,33 @@ module Trellor
       name = Regexp.new(card_name, Regexp::IGNORECASE)
       this_list.cards.find{ |card| name.match(card.name) }
     end
+
+    private
+
+    ############  connecting  ###############
+
+    def client(key=ENV['TRELLOR_KEY'], token=ENV['TRELLOR_TOKEN'])
+      @client ||= connect(key, token)
+    end
+
+    def connect(key=ENV['TRELLOR_KEY'], token=ENV['TRELLOR_TOKEN'])
+      verbose_log("connecting with", key, token)
+      Trello::Client.new(
+        :developer_public_key => key,
+        :member_token => token
+      )
+    end
+
+    def verbose_log(*args)
+      $stderr.puts("           ****** #{args.inspect}") if be_verbose
+    end
+
+    def user()
+      verbose_log('username', ENV['TRELLOR_USERNAME'])
+      @user ||= client.find(:members, ENV['TRELLOR_USERNAME'])
+    end
+
+
   end
 end
 

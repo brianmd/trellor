@@ -49,6 +49,9 @@ module Trellor
       nil
     end
 
+
+    ##############  trellor interface queries  ###############
+
     def board_names
       verbose_log('getting boards') unless @boards
       @boards = JSON.parse(get_http('/boards').body)
@@ -71,7 +74,10 @@ module Trellor
       JSON.parse(post_http("/boards/#{board_name}/lists/#{list_name}/cards", {card_name: name, archive: true}).body)
     end
 
+
     private
+
+    #################  private  ################
 
     def get_http(url, data=nil, timeout=nil, show_error=true)
       uri = Addressable::URI.parse("#{site}#{url}")
