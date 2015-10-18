@@ -86,6 +86,7 @@ module Trellor
 
     def get_http(url, data=nil, timeout=nil, show_error=true)
       uri = Addressable::URI.parse("#{site}#{url}")
+      verbose_log('get_http', uri, data)
       http = Net::HTTP.new uri.host, uri.port
       http.open_timeout = default_open_timeout
       http.read_timeout = timeout || default_read_timeout
@@ -102,6 +103,7 @@ module Trellor
 
     def post_http(url, data, timeout=nil, show_error=true)
       uri = URI("#{site}#{url}")
+      verbose_log('post_http', uri, data)
       http = Net::HTTP.new uri.host, uri.port
       http.open_timeout = default_open_timeout
       http.read_timeout = timeout || default_read_timeout
