@@ -1,6 +1,7 @@
 # TODO: show card descriptions
 
 require 'logger'
+require 'pathname'
 
 require_relative "trellor/version"
 require 'trello'
