@@ -6,6 +6,10 @@ require 'pathname'
 require 'addressable/uri'
 require_relative "trellor/version"
 
+# this is loaded just for logger.
+# TODO: move logger to separate file.
+require_relative 'trellor'
+
 module Trellor
   class WebTrellor
     attr_accessor :be_verbose
@@ -63,7 +67,8 @@ module Trellor
     end
 
     def card_names(board_name, list_name)
-      JSON.parse(get_http("/boards", {board_name: board_name, list_name: list_name}).body)
+      body = get_http("/boards", {board_name: board_name, list_name: list_name}).body
+      JSON.parse(body)
     end
 
     def create_card(board_name, list_name, name, descript=nil)
@@ -74,8 +79,8 @@ module Trellor
       JSON.parse(post_http("/boards/#{board_name}/lists/#{list_name}/cards", {card_name: name, archive: true}).body)
     end
 
-
     private
+
 
     #################  private  ################
 
@@ -128,44 +133,8 @@ module Trellor
     end
 
     def verbose_log(*args)
-      $stderr.puts("           ****** #{args.inspect}") if be_verbose
+      Trellor.logger.error("           ****** #{args.inspect}") #if @opts[:verbose]
     end
-
-    # def user()
-      # verbose_log('username', ENV['TRELLOR_USERNAME'])
-      # @user ||= client.find(:members, ENV['TRELLOR_USERNAME'])
-    # end
-
-
-
-
-
-    # def board(name)
-      # boards   # to get verbose log ordering correct
-      # verbose_log('getting board', name)
-      # name = name.downcase
-      # boards.detect{ |board| board.name.downcase.start_with?(name) }
-    # end
-
-    # def list(board_name, list_name)
-      # this_board = board(board_name)
-      # verbose_log('   getting list', board_name, list_name)
-      # list_name = list_name.downcase
-      # this_board.lists.detect do |list|
-        # list.name.downcase.start_with?(list_name)
-      # end
-    # end
-
-    # def cards(board_name, list_name)
-      # verbose_log('       getting cards for', board_name, list_name)
-      # list(board_name, list_name).cards
-    # end
-
-    # def card(board_name, list_name, card_name)
-      # list(board_name, list_name).cards.detect do |card|
-        # card.name==card_name
-      # end
-    # end
   end
 end
 

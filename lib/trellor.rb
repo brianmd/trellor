@@ -1,5 +1,7 @@
 # TODO: show card descriptions
 
+require 'logger'
+
 require_relative "trellor/version"
 require 'trello'
 
@@ -14,6 +16,29 @@ module Trellor
       end
       @singleton
     end
+
+    def self.logger
+      unless @logger
+        file = File.new(logger_filename.to_s, 'a')
+        # webapi wasn't logging to the file until it was killed.
+        # this causes the logger to flush immediately
+        file.sync = true
+        @logger = Logger.new file
+      end
+      @logger
+    end
+
+    def self.logger_filename
+      dirpath = Pathname.new(ENV['HOME']) + '.config/trellor'
+      dirpath.mkdir unless dirpath.directory?
+      filename = 'log'
+      dirpath + filename
+    end
+
+    def logger
+      self.class.logger
+    end
+
 
     ##############  trellor interface queries  ###############
 
@@ -38,7 +63,6 @@ module Trellor
       card = find_card(board_name, list_name, name)
       card.close!
     end
-
 
 
     ################  private queries  #################
@@ -79,6 +103,7 @@ module Trellor
 
     private
 
+
     ############  connecting  ###############
 
     def client(key=ENV['TRELLOR_KEY'], token=ENV['TRELLOR_TOKEN'])
@@ -94,7 +119,7 @@ module Trellor
     end
 
     def verbose_log(*args)
-      $stderr.puts("           ****** #{args.inspect}") if be_verbose
+      logger.error("           ****** #{args.inspect}") if be_verbose
     end
 
     def user()

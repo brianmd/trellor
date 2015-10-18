@@ -4,6 +4,7 @@ require 'pathname'
 module Trellor
   class Cli
     def self.parse
+      logger  # sets the logger's progname
       @opts = Trollop::options do
         banner "Usage: trellor [boardname [listname [cardname [description]]]]"
         version "trellor #{VERSION}"
@@ -107,7 +108,15 @@ module Trellor
     end
 
     def self.verbose_log(*args)
-      $stderr.puts("           ****** #{args.inspect}") if @opts[:verbose]
+      logger.info("           ****** #{args.inspect}") if @opts[:verbose]
+    end
+
+    def self.logger
+      unless @logger
+        @logger = Trellor.logger
+        @logger.progname = '[cli]'
+      end
+      @logger
     end
 
     def self.webapi?

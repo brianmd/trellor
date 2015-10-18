@@ -1,8 +1,7 @@
 require 'sinatra'
-require 'json'
+require 'yajl/json_gem'
 require_relative 'trellor/version'
 require_relative 'trellor'
-
 
 module Trellor
   class TrellorWebapi < Sinatra::Base
@@ -28,9 +27,22 @@ not_found do
 end
 
 error do
-  'had an error'
+  # log = Logger.new(File.new('log','a'))
+  msg = 'Sorry there was a error: ' + env['sinatra.error'].message
+  logger.error msg
+  env['sinatra.error'].backtrace.each{|l| logger.error l}
+  msg
 end
 
+helpers do
+ def logger
+   unless @logger
+     @logger = Trellor::Trellor.logger
+     @logger.progname = '[webapi]'
+   end
+   @logger
+ end
+end
 
 def trellor
   Trellor::Trellor.singleton
@@ -42,7 +54,9 @@ end
 
 get '/boards' do
   if params[:list_name]
-    cards = trellor.list(params[:board_name],params[:list_name]).cards.collect{ |card| card.name }
+    logger.info params.inspect
+    # cards = trellor.list_names(params[:board_name],params[:list_name]).cards.collect{ |card| card.name }
+    cards = trellor.card_names(params[:board_name],params[:list_name])
     cards.to_json
   elsif params[:board_name]
     lists = trellor.list_names(params[:board_name])
