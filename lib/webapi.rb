@@ -76,7 +76,7 @@ post '/boards' do
     trellor.create_card(board_name, list_name, params['card_name'], params['descript'])
   end
 
-  cards = trellor.list(board_name,list_name).cards.collect{ |c| c.name }
+  cards = trellor.card_names(board_name,list_name)
   cards.to_json
   params.to_json
 end

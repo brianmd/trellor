@@ -72,11 +72,14 @@ module Trellor
     end
 
     def create_card(board_name, list_name, name, descript=nil)
-      JSON.parse(post_http("/boards/#{board_name}/lists/#{list_name}/cards", {card_name: name, descript: descript}).body)
+      # JSON.parse(post_http("/boards/#{board_name}/lists/#{list_name}/cards", {card_name: name, descript: descript}).body)
+      data = {board_name: board_name, list_name: list_name, card_name: name, descript: descript}
+      JSON.parse(post_http('/boards', data).body)
     end
 
     def archive_card(board_name, list_name, name)
-      JSON.parse(post_http("/boards/#{board_name}/lists/#{list_name}/cards", {card_name: name, archive: true}).body)
+      data = {archive: true, board_name: board_name, list_name: list_name, card_name: name, descript: descript}
+      JSON.parse(post_http('/boards', data).body)
     end
 
     private
