@@ -44,11 +44,11 @@ module Trellor
           verbose_log('using webapi')
           require_relative 'web_trellor'
           web = WebTrellor.new
-          web.be_verbose = true if verbose?
+          # web.be_verbose = true if verbose?
           web.ensure_webapp_is_running
           web
         end
-        @trellor.be_verbose = true if verbose?
+        # @trellor.be_verbose = true if verbose?
       end
       @trellor
     end
