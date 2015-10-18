@@ -95,7 +95,7 @@ module Trellor
     end
 
     def find_card(board_name, list_name, card_name)
-      this_list = list(board_name, list_name)
+      this_list = find_list(board_name, list_name)
       verbose_log('   getting card', board_name, list_name, card_name)
       name = Regexp.new(card_name, Regexp::IGNORECASE)
       this_list.cards.find{ |card| name.match(card.name) }

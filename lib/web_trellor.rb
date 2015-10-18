@@ -74,7 +74,7 @@ module Trellor
     end
 
     def archive_card(board_name, list_name, name)
-      data = {archive: true, board_name: board_name, list_name: list_name, card_name: name, descript: descript}
+      data = {archive: true, board_name: board_name, list_name: list_name, card_name: name}
       JSON.parse(post_http('/boards', data).body)
     end
 
