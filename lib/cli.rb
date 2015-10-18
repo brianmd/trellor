@@ -4,7 +4,6 @@ require 'pathname'
 module Trellor
   class Cli
     def self.parse
-      logger  # sets the logger's progname
       @opts = Trollop::options do
         banner "Usage: trellor [boardname [listname [cardname [description]]]]"
         version "trellor #{VERSION}"
@@ -15,10 +14,12 @@ module Trellor
         opt :slowtrellor, 'Make own connection rather than using webapi', short: '-s'
       end
 
+      logger  # sets the logger's progname
+
       if webapi?
         require_relative 'web_trellor'
         web = WebTrellor.new
-        web.be_verbose = true if @opts[:verbose]
+        # web.be_verbose = true if verbose?
         web.ensure_webapp_is_running(false)
         exit 0
       end
@@ -43,13 +44,17 @@ module Trellor
           verbose_log('using webapi')
           require_relative 'web_trellor'
           web = WebTrellor.new
-          web.be_verbose = true if @opts[:verbose]
+          web.be_verbose = true if verbose?
           web.ensure_webapp_is_running
           web
         end
-        @trellor.be_verbose = true if @opts[:verbose]
+        @trellor.be_verbose = true if verbose?
       end
       @trellor
+    end
+
+    def self.verbose?
+      @opts[:verbose]
     end
     
     def self.homepath
@@ -108,13 +113,18 @@ module Trellor
     end
 
     def self.verbose_log(*args)
-      logger.info("           ****** #{args.inspect}") if @opts[:verbose]
+      logger.debug("           ****** #{args.inspect}")
     end
 
     def self.logger
       unless @logger
         @logger = Trellor.logger
         @logger.progname = '[cli]'
+        if verbose?
+          @logger.level = Logger::DEBUG
+        else
+          @logger.level = Logger::WARN
+        end
       end
       @logger
     end

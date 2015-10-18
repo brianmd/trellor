@@ -12,8 +12,6 @@ require_relative 'trellor'
 
 module Trellor
   class WebTrellor
-    attr_accessor :be_verbose
-
     def ensure_webapp_is_running(fork=true)
       v = get_version
       $stderr.puts "Warning: this version is #{VERSION} but the webapp version is #{v}. You may want to kill the older webapp." unless (!v or (v==VERSION))
@@ -59,7 +57,6 @@ module Trellor
     def board_names
       verbose_log('getting boards') unless @boards
       @boards = JSON.parse(get_http('/boards').body)
-      #@boards ||= user.boards.select{ |b| !b.closed? }
     end
 
     def list_names(board_name)
@@ -72,7 +69,6 @@ module Trellor
     end
 
     def create_card(board_name, list_name, name, descript=nil)
-      # JSON.parse(post_http("/boards/#{board_name}/lists/#{list_name}/cards", {card_name: name, descript: descript}).body)
       data = {board_name: board_name, list_name: list_name, card_name: name, descript: descript}
       JSON.parse(post_http('/boards', data).body)
     end
@@ -138,7 +134,7 @@ module Trellor
     end
 
     def verbose_log(*args)
-      Trellor.logger.error("           ****** #{args.inspect}") #if @opts[:verbose]
+      Trellor.logger.debug("           ****** #{args.inspect}")
     end
   end
 end
