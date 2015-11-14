@@ -16,7 +16,7 @@ module Trellor
         opt :slowtrellor, 'Make own connection rather than using webapi', short: '-s'
       end
 
-      logger.set_verbosity
+      set_verbosity
 
       if webapi?
         require_relative 'web_trellor'
