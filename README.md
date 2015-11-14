@@ -56,10 +56,10 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 ## Design
 
 ### Class Diagram
-![Alt text](/docs/trellor.png?raw=true "Class Diagram")
+![Alt text](docs/trellor.png?raw=true "Class Diagram")
 
 ### Sequence Diagram
-![Alt text](/docs/trellor_seq_diag.png?raw=true "Sequence Diagram")
+![Alt text](docs/trellor_seq_diag.png?raw=true "Sequence Diagram")
 
 ## Contributing
 

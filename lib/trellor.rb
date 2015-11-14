@@ -32,7 +32,7 @@ module Trellor
     def self.logger_filename
       dirpath = Pathname.new(ENV['HOME']) + '.config/trellor'
       dirpath.mkdir unless dirpath.directory?
-      filename = 'log'
+      filename = 'trellor.log'
       dirpath + filename
     end
 
