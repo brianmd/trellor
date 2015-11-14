@@ -4,6 +4,8 @@ require 'pathname'
 module Trellor
   class Cli
     def self.parse
+      logger.info "$ trellor #{ARGV.join(' ')}"
+
       @opts = Trollop::options do
         banner "Usage: trellor [boardname [listname [cardname [description]]]]"
         version "trellor #{VERSION}"
@@ -14,7 +16,7 @@ module Trellor
         opt :slowtrellor, 'Make own connection rather than using webapi', short: '-s'
       end
 
-      logger  # sets the logger's progname
+      logger.set_verbosity
 
       if webapi?
         require_relative 'web_trellor'
@@ -120,13 +122,16 @@ module Trellor
       unless @logger
         @logger = Trellor.logger
         @logger.progname = '[cli]'
-        if verbose?
-          @logger.level = Logger::DEBUG
-        else
-          @logger.level = Logger::WARN
-        end
       end
       @logger
+    end
+
+    def self.set_verbosity
+      if verbose?
+        @logger.level = Logger::DEBUG
+      else
+        @logger.level = Logger::INFO
+      end
     end
 
     def self.webapi?
